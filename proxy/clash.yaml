@@ -54,13 +54,12 @@ proxies:
       path: /api/ws
       headers:
         Host2: aws.com
-  - name: test2
+  - name: 1tc30wv1
     type: ss
     server: 48.218.34.111
-    port: "6379"
+    port: 6399
     cipher: aes-256-gcm
-    password: LQMFv2SxqSCbAUKDbav3uUrZNv0aog/UaF3NM9cX6Mc=
-    _index: 1
+    password: 71/PzPImyTbjVTlezvZIOlCeypzpUj7wR6f3mB7/DnA=
 proxy-groups:
   - name: 🔰 选择节点
     type: select
