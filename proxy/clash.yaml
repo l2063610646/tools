@@ -41,20 +41,6 @@ dns:
     - tcp://223.6.6.6
 proxies:
   - name: azure
-    type: vmess
-    server: 48.218.34.111
-    port: 6379
-    cipher: auto
-    uuid: 35e17ce3-e99e-4604-b9dd-cd86cdf6157c
-    alterId: 0
-    tls: false
-    skip-cert-verify: true
-    network: ws
-    ws-opts:
-      path: /api/ws
-      headers:
-        Host2: aws.com
-  - name: 1tc30wv1
     type: ss
     server: 48.218.34.111
     port: 6399
