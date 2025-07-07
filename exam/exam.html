@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>试题解析系统</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="./bootstrap.min.css" rel="stylesheet">
+    <style>
+        .question-card {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .analysis {
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">在线试题系统</h1>
+        
+        <!-- 文件上传区域 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <input type="file" id="jsonFile" class="form-control" accept=".json">
+                <small class="form-text text-muted">请选择试题JSON文件</small>
+            </div>
+        </div>
+
+        <!-- 试题展示区域 -->
+        <div id="paperContainer" class="d-none"></div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="./bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById('jsonFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const questions = JSON.parse(event.target.result);
+                    renderPaper(questions);
+                    document.getElementById('paperContainer').classList.remove('d-none');
+                } catch (error) {
+                    alert('文件解析失败，请检查文件格式');
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        function renderPaper(questions) {
+            const container = document.getElementById('paperContainer');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const questionHTML = `
+                    <div class="card question-card">
+                        <div class="card-body">
+                            <h5 class="card-title">题目 ${index + 1}</h5>
+                            <p class="card-text">${q.question}</p>
+                            
+                            <div class="options-area mb-3">
+                                ${renderOptions(q)}
+                            </div>
+
+                            <div class="analysis">
+                                <div class="alert alert-success">正确答案：${q.answer}</div>
+                                <p><strong>解析：</strong>${q.analysis}</p>
+                                ${q.ai_analysis ? `<p><strong>AI分析：</strong>${q.ai_analysis}</p>` : ''}
+                            </div>
+
+                            <button onclick="checkAnswer(this, '${q.answer}', ${q.qtype})" 
+                                    class="btn btn-primary btn-sm">
+                                提交答案
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', questionHTML);
+            });
+        }
+
+        function renderOptions(q) {
+            const options = JSON.parse(q.options);
+            return options.map(opt => `
+                <div class="form-check">
+                    <input class="form-check-input" type="${q.qtype === '1' ? 'radio' : 'checkbox'}" 
+                           name="question${q.id}" id="opt${q.id}${opt.Key}" value="${opt.Key}">
+                    <label class="form-check-label" for="opt${q.id}${opt.Key}">
+                        <strong>${opt.Key}.</strong> ${opt.Value}
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        function checkAnswer(btn, correctAnswer, qtype) {
+            const card = btn.closest('.card-body');
+            const selected = [...card.querySelectorAll('input:checked')].map(i => i.value);
+            const analysisDiv = card.querySelector('.analysis');
+            
+            let isCorrect = false;
+            if (qtype === 1) {
+                isCorrect = selected[0] === correctAnswer;
+            } else {
+                const correctAnswers = [...correctAnswer];
+                isCorrect = selected.length === correctAnswers.length && 
+                          correctAnswers.every(a => selected.includes(a));
+            }
+
+            analysisDiv.style.display = 'block';
+            analysisDiv.style.backgroundColor = isCorrect ? '#d4edda' : '#f8d7da';
+            btn.disabled = true;
+        }
+    </script>
+</body>
+</html>
