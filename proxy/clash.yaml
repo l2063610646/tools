@@ -7398,6 +7398,7 @@ rules:
   - DOMAIN-SUFFIX,xiami.net,🇨🇳 国内网站
   - DOMAIN-SUFFIX,ykimg.com,🇨🇳 国内网站
   - DOMAIN-SUFFIX,youku.com,🇨🇳 国内网站
+  - DOMAIN-SUFFIX,saawsedge.com,🇨🇳 国内网站
   - DOMAIN-SUFFIX,baidu.com,🇨🇳 国内网站
   - DOMAIN-SUFFIX,baidubcr.com,🇨🇳 国内网站
   - DOMAIN-SUFFIX,baidupcs.com,🇨🇳 国内网站
@@ -9671,3 +9672,4 @@ rules:
   - GEOIP,CN,🇨🇳 国内网站
   - DOMAIN-KEYWORD,.,🐟 漏网之鱼
   - MATCH,🐟 漏网之鱼
+
