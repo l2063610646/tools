@@ -8003,6 +8003,7 @@ rules:
   - DOMAIN-SUFFIX,cn-south-4.myhuaweicloud.com,🇨🇳 国内网站
   - DOMAIN-SUFFIX,cn-south-2.myhuaweicloud.com,🇨🇳 国内网站
   - DOMAIN-SUFFIX,cn-southwest-2.myhuaweicloud.com,🇨🇳 国内网站
+  - DOMAIN-SUFFIX,fourhoi.com,🇨🇳 国内网站
   - DOMAIN-SUFFIX,cloudflare-dns.com,🌩️ Cloudflare
   - DOMAIN-SUFFIX,cloudflare-ipfs.com,🌩️ Cloudflare
   - DOMAIN-SUFFIX,cloudflare-quic.com,🌩️ Cloudflare
@@ -9672,4 +9673,5 @@ rules:
   - GEOIP,CN,🇨🇳 国内网站
   - DOMAIN-KEYWORD,.,🐟 漏网之鱼
   - MATCH,🐟 漏网之鱼
+
 
