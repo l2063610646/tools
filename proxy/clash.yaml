@@ -49,11 +49,14 @@ proxies:
   
 
   - name: azure2
-    type: ss
     server: 172.188.115.45
-    port: 8080
-    cipher: aes-256-gcm
-    password: 71/PzPImyTbjVTlezvZIOlCeypzpUj7wR6f3mB7/DnA=
+    type: vmess
+    port: 27017
+    uuid: a37f67f9-fc57-439c-9ce2-8766581d1cfc
+    alterId: 0
+    cipher: auto
+    udp: true
+    network: tcp
 
 proxy-groups:
   - name: 🔰 选择节点
@@ -9691,6 +9694,7 @@ rules:
   - GEOIP,CN,🇨🇳 国内网站
   - DOMAIN-KEYWORD,.,🐟 漏网之鱼
   - MATCH,🐟 漏网之鱼
+
 
 
 
