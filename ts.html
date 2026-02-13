@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>精确倒计时器</title>
+    <style>
+        :root {
+            --primary-color: #007AFF;
+            --bg-color: #f0f2f5;
+        }
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: var(--bg-color);
+        }
+        .card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+        }
+        h1 { font-size: 1rem; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+        #timer {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            font-variant-numeric: tabular-nums;
+            margin: 1.5rem 0;
+            line-height: 1;
+        }
+        .controls {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+        /* 关键：datetime-local 支持秒 */
+        input[type="datetime-local"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eef0f2;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input[type="datetime-local"]:focus {
+            border-color: var(--primary-color);
+        }
+        .tip {
+            font-size: 0.8rem;
+            color: #bbb;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1 id="status-text">倒计时中</h1>
+    <div id="timer">00天 00:00:00</div>
+    
+    <div class="controls">
+        <input type="datetime-local" id="timePicker" step="1">
+        <p class="tip">点击上方输入框可精确选择：年/月/日 时:分:秒</p>
+    </div>
+</div>
+
+<script>
+    const timerEl = document.getElementById('timer');
+    const statusEl = document.getElementById('status-text');
+    const pickerEl = document.getElementById('timePicker');
+
+    // 工具函数：格式化 Date 对象为 datetime-local 所需的字符串 (YYYY-MM-DDTHH:mm:ss)
+    function formatToPickerStr(date) {
+        const offset = date.getTimezoneOffset() * 60000;
+        const localISOTime = (new Date(date - offset)).toISOString().slice(0, 19);
+        return localISOTime;
+    }
+
+    // 1. 初始化逻辑
+    function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let targetParam = urlParams.get('target');
+        let targetDate;
+
+        if (targetParam) {
+            // 处理 URL 传参，兼容空格和 T 分隔符
+            targetDate = new Date(targetParam.replace(' ', 'T'));
+        }
+
+        // 如果 URL 无效或不存在，默认设为 1 小时后
+        if (!targetDate || isNaN(targetDate)) {
+            targetDate = new Date();
+            targetDate.setHours(targetDate.getHours() + 1);
+        }
+
+        pickerEl.value = formatToPickerStr(targetDate);
+        return targetDate.getTime();
+    }
+
+    let targetTimestamp = init();
+
+    // 2. 监听手动修改（精确到秒）
+    pickerEl.addEventListener('change', (e) => {
+        const newDate = new Date(e.target.value);
+        if (!isNaN(newDate)) {
+            targetTimestamp = newDate.getTime();
+            // 实时更新 URL 方便分享
+            const urlStr = e.target.value.replace('T', ' ');
+            window.history.replaceState({}, '', `?target=${encodeURIComponent(urlStr)}`);
+        }
+    });
+
+    // 3. 渲染循环
+    function render() {
+        const now = new Date().getTime();
+        const diff = targetTimestamp - now;
+
+        if (diff <= 0) {
+            timerEl.innerText = "00天 00:00:00";
+            statusEl.innerText = "时间已到达";
+            timerEl.style.color = "#FF3B30";
+            return;
+        }
+
+        timerEl.style.color = "var(--primary-color)";
+        statusEl.innerText = "距离目标时刻还有";
+
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+
+        const pad = (n) => String(n).padStart(2, '0');
+        timerEl.innerText = `${pad(d)}天 ${pad(h)}:${pad(m)}:${pad(s)}`;
+    }
+
+    setInterval(render, 1000);
+    render();
+</script>
+
+</body>
+</html>
